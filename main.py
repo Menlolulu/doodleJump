@@ -27,14 +27,15 @@ while running:
     # move the player
     player_y += player_y_speed
     player_y_speed += 0.25
-    if player_y >= SCREEN_HEIGHT - PLAYER_SIZE:
-        player_y_speed = -7
+    if player_y >= SCREEN_HEIGHT - 75 - PLAYER_SIZE:
+        player_y_speed = -12
 
     # fill the screen with a color to wipe away anything from last frame
     screen.fill("white")
 
     # RENDER YOUR GAME HERE
     pygame.draw.rect(screen,"yellow",(player_x,player_y,PLAYER_SIZE,PLAYER_SIZE))
+    pygame.draw.rect(screen, "black", (0,SCREEN_HEIGHT - 75,SCREEN_WIDTH,25))
 
     # flip() the display to put your work on screen
     pygame.display.flip()
