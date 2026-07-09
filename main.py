@@ -22,6 +22,7 @@ while running:
     screen.fill("white")
 
     # RENDER YOUR GAME HERE
+    pygame.draw.rect(screen,"yellow",(250,50,75,75))
 
     # flip() the display to put your work on screen
     pygame.display.flip()
