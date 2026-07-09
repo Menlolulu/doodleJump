@@ -1,4 +1,5 @@
 # Example file showing a basic pygame "game loop"
+import random
 import pygame
 pygame.init()
 
@@ -6,6 +7,8 @@ pygame.init()
 SCREEN_WIDTH = 500
 SCREEN_HEIGHT = 720
 PLAYER_SIZE = 75
+PLATFORM_WIDTH = 100
+PLATFORM_HEIGHT = 25
 
 # pygame setup
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -16,6 +19,7 @@ running = True
 player_x = 250
 player_y = 50
 player_y_speed = 0
+platform_x = 100
 
 while running:
     # poll for events
@@ -29,11 +33,12 @@ while running:
     player_y_speed += 0.25
     if (
         player_y >= SCREEN_HEIGHT - 75 - PLAYER_SIZE and # the player is on top of the platform
-        player_x <= SCREEN_WIDTH / 2 + 100 and # the player x is to the left of the right side of the platform
+        player_x <= PLATFORM_WIDTH + platform_x and # the player x is to the left of the right side of the platform
         not player_y >= SCREEN_HEIGHT - 75 and # the player is below the screen
-        player_x >= 100 - PLAYER_SIZE # the player x is to the right of the left side of the platform
+        player_x >= platform_x - PLAYER_SIZE # the player x is to the right of the left side of the platform
     ):
         player_y_speed = -12
+        platform_x = random.randint(0, SCREEN_WIDTH - PLATFORM_WIDTH)
     
     keys = pygame.key.get_pressed()
     if keys[pygame.K_LEFT]:
@@ -46,7 +51,7 @@ while running:
 
     # RENDER YOUR GAME HERE
     pygame.draw.rect(screen,"yellow",(player_x,player_y,PLAYER_SIZE,PLAYER_SIZE))
-    pygame.draw.rect(screen, "black", (100,SCREEN_HEIGHT - 75,SCREEN_WIDTH/2,25))
+    pygame.draw.rect(screen, "black", (platform_x,SCREEN_HEIGHT - 75,PLATFORM_WIDTH,PLATFORM_HEIGHT))
 
     # flip() the display to put your work on screen
     pygame.display.flip()
