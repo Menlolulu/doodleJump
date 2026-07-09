@@ -29,6 +29,12 @@ while running:
     player_y_speed += 0.25
     if player_y >= SCREEN_HEIGHT - 75 - PLAYER_SIZE:
         player_y_speed = -12
+    
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_LEFT]:
+        player_x -= 3
+    if keys[pygame.K_RIGHT]:
+        player_x += 3
 
     # fill the screen with a color to wipe away anything from last frame
     screen.fill("white")
