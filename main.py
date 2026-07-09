@@ -5,11 +5,17 @@ pygame.init()
 # configuration
 SCREEN_WIDTH = 500
 SCREEN_HEIGHT = 720
+PLAYER_SIZE = 75
 
 # pygame setup
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 clock = pygame.time.Clock()
 running = True
+
+# game variables
+player_x = 250
+player_y = 50
+player_y_speed = 0
 
 while running:
     # poll for events
@@ -17,12 +23,18 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+    
+    # move the player
+    player_y += player_y_speed
+    player_y_speed += 0.25
+    if player_y >= SCREEN_HEIGHT - PLAYER_SIZE:
+        player_y_speed = -7
 
     # fill the screen with a color to wipe away anything from last frame
     screen.fill("white")
 
     # RENDER YOUR GAME HERE
-    pygame.draw.rect(screen,"yellow",(250,50,75,75))
+    pygame.draw.rect(screen,"yellow",(player_x,player_y,PLAYER_SIZE,PLAYER_SIZE))
 
     # flip() the display to put your work on screen
     pygame.display.flip()
