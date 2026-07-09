@@ -27,7 +27,12 @@ while running:
     # move the player
     player_y += player_y_speed
     player_y_speed += 0.25
-    if player_y >= SCREEN_HEIGHT - 75 - PLAYER_SIZE:
+    if (
+        player_y >= SCREEN_HEIGHT - 75 - PLAYER_SIZE and # the player is on top of the platform
+        player_x <= SCREEN_WIDTH / 2 + 100 and # the player x is to the left of the right side of the platform
+        not player_y >= SCREEN_HEIGHT - 75 and # the player is below the screen
+        player_x >= 100 - PLAYER_SIZE # the player x is to the right of the left side of the platform
+    ):
         player_y_speed = -12
     
     keys = pygame.key.get_pressed()
@@ -41,7 +46,7 @@ while running:
 
     # RENDER YOUR GAME HERE
     pygame.draw.rect(screen,"yellow",(player_x,player_y,PLAYER_SIZE,PLAYER_SIZE))
-    pygame.draw.rect(screen, "black", (0,SCREEN_HEIGHT - 75,SCREEN_WIDTH,25))
+    pygame.draw.rect(screen, "black", (100,SCREEN_HEIGHT - 75,SCREEN_WIDTH/2,25))
 
     # flip() the display to put your work on screen
     pygame.display.flip()
