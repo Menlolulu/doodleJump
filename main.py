@@ -9,7 +9,7 @@ SCREEN_HEIGHT = 720
 PLAYER_SIZE = 75
 PLATFORM_WIDTH = 100
 PLATFORM_HEIGHT = 25
-SCORE_FONT = pygame.font.SysFont("Tratatello", 20)
+SCORE_FONT = pygame.font.SysFont("Tratatello", 50)
 
 # pygame setup
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -47,6 +47,15 @@ class Platform:
         self.x_speed = 0
         if random.randint(1,5) == 1:
             self.x_speed = 3
+        if random.randint(1,3) == 1:
+            self.bouncy = False
+            self.breaks = True
+        else:
+            self.breaks = False
+        if self.width == SCREEN_WIDTH:
+            self.bouncy = False
+            self.breaks = False
+            self.x_speed = 0
     
     def move_side_to_side(self):
         self.x += self.x_speed
@@ -69,17 +78,24 @@ class Platform:
                 player_y_speed = 28
             else:
                 player_y_speed = 12
+            if self.breaks:
+                self.teleport_up()
     
     def platform_color(self):
         if self.bouncy:
             return "#6a6a6a"
+        elif self.breaks:
+            return "#6F4231"
         else:
             return "black"
+    
+    def teleport_up(self):
+        self.y += SCREEN_HEIGHT
+        self.reset_platform()
 
     def draw(self):
         if game_y_to_screen(self.y) > SCREEN_HEIGHT and not self.width == SCREEN_WIDTH:
-            self.y += SCREEN_HEIGHT
-            self.reset_platform()
+            self.teleport_up()
         pygame.draw.rect(screen, self.platform_color(), (
             game_x_to_screen(self.x),
             game_y_to_screen(self.y),
