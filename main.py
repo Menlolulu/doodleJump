@@ -35,9 +35,9 @@ def game_point_to_screen(game_x, game_y):
 # classes
 class Platform:
     def __init__(self, platform_y):
-        self.x = 100
-        self.y = platform_y
         self.width = PLATFORM_WIDTH
+        self.x = random.randint(0, SCREEN_WIDTH - self.width)
+        self.y = platform_y
     
     def bounce_player(self):
         global player_y_speed
@@ -46,12 +46,15 @@ class Platform:
             player_y <= self.y + PLAYER_SIZE and # the player is on top of the platform
             player_x <= self.width + self.x and # the player x is to the left of the right side of the platform
             not player_y <= self.y and # the player is below the screen
-            player_x >= self.x - PLAYER_SIZE # the player x is to the right of the left side of the platform
+            player_x >= self.x - PLAYER_SIZE and # the player x is to the right of the left side of the platform
+            player_y_speed < 0 # the player is falling
         ):
             player_y_speed = 12
-            self.x = random.randint(0, SCREEN_WIDTH - self.width)
 
     def draw(self):
+        if game_y_to_screen(self.y) > SCREEN_HEIGHT and not self.width == SCREEN_WIDTH:
+            self.y += SCREEN_HEIGHT
+            self.x = random.randint(0, SCREEN_WIDTH - self.width)
         pygame.draw.rect(screen, "black", (
             game_x_to_screen(self.x),
             game_y_to_screen(self.y),
@@ -60,9 +63,14 @@ class Platform:
         ))
 
 big_platform = Platform(30)
-platform1 = Platform(75)
-platform2 = Platform(200)
-platform3 = Platform(400)
+platforms = [
+    Platform(200),
+    Platform(400),
+    Platform(600),
+    Platform(800),
+    Platform(1000),
+    Platform(1200),
+]
 
 big_platform.x = 0
 big_platform.width = SCREEN_WIDTH
@@ -81,9 +89,8 @@ while running:
     player_y += player_y_speed
     player_y_speed -= 0.25
 
-    platform1.bounce_player()
-    platform2.bounce_player()
-    platform3.bounce_player()
+    for p in platforms:
+        p.bounce_player()
     big_platform.bounce_player()
     
     keys = pygame.key.get_pressed()
@@ -97,9 +104,8 @@ while running:
 
     # RENDER YOUR GAME HERE
     pygame.draw.rect(screen,"yellow",(game_x_to_screen(player_x),game_y_to_screen(player_y),PLAYER_SIZE,PLAYER_SIZE))
-    platform1.draw()
-    platform2.draw()
-    platform3.draw()
+    for p in platforms:
+        p.draw()
     big_platform.draw()
 
     # flip() the display to put your work on screen
