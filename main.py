@@ -38,6 +38,11 @@ class Platform:
         self.width = PLATFORM_WIDTH
         self.x = random.randint(0, SCREEN_WIDTH - self.width)
         self.y = platform_y
+        self.bouncy = random.randint(1, 8) == 1
+    
+    def reset_platform(self):
+        self.x = random.randint(0, SCREEN_WIDTH - self.width)
+        self.bouncy = random.randint(1, 8) == 1
     
     def bounce_player(self):
         global player_y_speed
@@ -49,13 +54,22 @@ class Platform:
             player_x >= self.x - PLAYER_SIZE and # the player x is to the right of the left side of the platform
             player_y_speed < 0 # the player is falling
         ):
-            player_y_speed = 12
+            if self.bouncy:
+                player_y_speed = 28
+            else:
+                player_y_speed = 12
+    
+    def platform_color(self):
+        if self.bouncy:
+            return "#6a6a6a"
+        else:
+            return "black"
 
     def draw(self):
         if game_y_to_screen(self.y) > SCREEN_HEIGHT and not self.width == SCREEN_WIDTH:
             self.y += SCREEN_HEIGHT
-            self.x = random.randint(0, SCREEN_WIDTH - self.width)
-        pygame.draw.rect(screen, "black", (
+            self.reset_platform()
+        pygame.draw.rect(screen, self.platform_color(), (
             game_x_to_screen(self.x),
             game_y_to_screen(self.y),
             self.width,
