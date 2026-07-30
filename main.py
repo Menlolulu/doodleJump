@@ -9,6 +9,7 @@ SCREEN_HEIGHT = 720
 PLAYER_SIZE = 75
 PLATFORM_WIDTH = 100
 PLATFORM_HEIGHT = 25
+SCORE_FONT = pygame.font.SysFont("Tratatello", 20)
 
 # pygame setup
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -36,13 +37,23 @@ def game_point_to_screen(game_x, game_y):
 class Platform:
     def __init__(self, platform_y):
         self.width = PLATFORM_WIDTH
-        self.x = random.randint(0, SCREEN_WIDTH - self.width)
         self.y = platform_y
-        self.bouncy = random.randint(1, 8) == 1
+        # setting it up for the first time
+        self.reset_platform()
     
     def reset_platform(self):
         self.x = random.randint(0, SCREEN_WIDTH - self.width)
         self.bouncy = random.randint(1, 8) == 1
+        self.x_speed = 0
+        if random.randint(1,5) == 1:
+            self.x_speed = 3
+    
+    def move_side_to_side(self):
+        self.x += self.x_speed
+        if self.x >= SCREEN_WIDTH - PLATFORM_WIDTH - 10:
+            self.x_speed *= -1
+        elif self.x <= 10:
+            self.x_speed *= -1
     
     def bounce_player(self):
         global player_y_speed
@@ -105,6 +116,7 @@ while running:
 
     for p in platforms:
         p.bounce_player()
+        p.move_side_to_side()
     big_platform.bounce_player()
     
     keys = pygame.key.get_pressed()
@@ -121,6 +133,9 @@ while running:
     for p in platforms:
         p.draw()
     big_platform.draw()
+
+    score_text_image = SCORE_FONT.render(str(round(camera_y)), True, "blue")
+    screen.blit(score_text_image, (10, 10))
 
     # flip() the display to put your work on screen
     pygame.display.flip()
