@@ -9,6 +9,7 @@ SCREEN_HEIGHT = 720
 PLAYER_SIZE = 75
 PLATFORM_WIDTH = 100
 PLATFORM_HEIGHT = 25
+BULLET_SPEED = 10
 SCORE_FONT = pygame.font.SysFont("Tratatello", 50)
 
 # pygame setup
@@ -103,6 +104,17 @@ class Platform:
             PLATFORM_HEIGHT
         ))
 
+class Bullet:
+    def __init__(self, starting_x, starting_y):
+        self.x = starting_x
+        self.y = starting_y
+
+    def move_up(self):
+        self.y+= BULLET_SPEED
+
+    def draw(self):
+        pygame.draw.circle(screen,"#6a6a6a",game_point_to_screen(self.x,self.y),15)
+
 big_platform = Platform(30)
 platforms = [
     Platform(200),
@@ -113,6 +125,8 @@ platforms = [
     Platform(1200),
 ]
 
+bullets = []
+
 big_platform.x = 0
 big_platform.width = SCREEN_WIDTH
 
@@ -122,7 +136,9 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-    
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+            bullets.append(Bullet(player_x+50,player_y))
+
     # move the player
     if game_y_to_screen(player_y) < SCREEN_HEIGHT / 4:
         camera_y -= game_y_to_screen(player_y) - SCREEN_HEIGHT / 4
@@ -133,6 +149,10 @@ while running:
     for p in platforms:
         p.bounce_player()
         p.move_side_to_side()
+    for b in bullets:
+        b.move_up()
+        if b.y > player_y + 1000:
+            del b
     big_platform.bounce_player()
     
     keys = pygame.key.get_pressed()
@@ -148,6 +168,8 @@ while running:
     pygame.draw.rect(screen,"yellow",(game_x_to_screen(player_x),game_y_to_screen(player_y),PLAYER_SIZE,PLAYER_SIZE))
     for p in platforms:
         p.draw()
+    for b in bullets:
+        b.draw()
     big_platform.draw()
 
     score_text_image = SCORE_FONT.render(str(round(camera_y)), True, "blue")
