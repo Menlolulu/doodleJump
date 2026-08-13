@@ -1,4 +1,5 @@
 # Example file showing a basic pygame "game loop"
+import math
 import random
 import pygame
 pygame.init()
@@ -115,6 +116,23 @@ class Bullet:
     def draw(self):
         pygame.draw.circle(screen,"#6a6a6a",game_point_to_screen(self.x,self.y),15)
 
+    def try_to_kill_monster(self, monster):
+        distance = math.sqrt((self.x - monster.x) ** 2 + (self.y - monster.y) ** 2)
+        if distance <= 75 + 15:
+            print("DIEEEEEEEEEEEE")
+            # DIEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEeee
+            monster.health -= 1
+            print(monster.health)
+
+class Monster:
+    def __init__(self, starting_y):
+        self.health = 1
+        self.x = random.randint(0, SCREEN_WIDTH - 150)
+        self.y = starting_y
+
+    def draw(self):
+        pygame.draw.circle(screen,"#fc1105",game_point_to_screen(self.x,self.y),75)
+
 big_platform = Platform(30)
 platforms = [
     Platform(200),
@@ -125,6 +143,7 @@ platforms = [
     Platform(1200),
 ]
 
+monsters = [Monster(500),Monster(1000),Monster(1500),Monster(2000)]
 bullets = []
 
 big_platform.x = 0
@@ -153,6 +172,9 @@ while running:
         b.move_up()
         if b.y > player_y + 1000:
             del b
+            continue
+        for m in monsters:
+            b.try_to_kill_monster(m)
     big_platform.bounce_player()
     
     keys = pygame.key.get_pressed()
@@ -170,6 +192,9 @@ while running:
         p.draw()
     for b in bullets:
         b.draw()
+    for m in monsters:
+        if m.health > 0:
+            m.draw()
     big_platform.draw()
 
     score_text_image = SCORE_FONT.render(str(round(camera_y)), True, "blue")
